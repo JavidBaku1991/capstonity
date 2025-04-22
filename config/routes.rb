@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   # Root route
   root 'home#index'
   
+  # Cart routes
+  resource :cart, only: [:show, :destroy]
+  resources :line_items, only: [:create, :update, :destroy]
+  
   # API endpoints
   resources :products, only: [:index, :show], defaults: { format: :json }
   
