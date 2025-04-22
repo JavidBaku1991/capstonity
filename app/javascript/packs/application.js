@@ -3,4 +3,17 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from '../src/App'
+
 console.log("Application.js loaded");
+
+document.addEventListener('DOMContentLoaded', () => {
+  const root = ReactDOM.createRoot(document.getElementById('root'))
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  )
+})
