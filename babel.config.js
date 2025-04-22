@@ -6,7 +6,7 @@ module.exports = function(api) {
       ['@babel/preset-react', { runtime: 'automatic' }]
     ],
     plugins: [
-      '@babel/plugin-proposal-class-properties',
+        '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-object-rest-spread'
     ]
   };

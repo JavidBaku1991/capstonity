@@ -10,28 +10,28 @@ const Home = () => {
       title: "Product 1",
       description: "Description for product 1",
       price: 99.99,
-      image: "/images/product1.jpg"
+      image: "/images/1.png"
     },
     {
       id: 2,
       title: "Product 2",
       description: "Description for product 2",
       price: 149.99,
-      image: "/images/product2.jpg"
+      image: "/images/2.png"
     },
     {
       id: 3,
       title: "Product 3",
       description: "Description for product 3",
       price: 199.99,
-      image: "/images/product3.jpg"
+      image: "/images/2.png"
     },
     {
       id: 4,
       title: "Product 4",
       description: "Description for product 4",
       price: 249.99,
-      image: "/images/product4.jpg"
+      image: "/images/1.png"
     }
   ]
 
