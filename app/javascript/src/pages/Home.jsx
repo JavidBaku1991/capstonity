@@ -1,6 +1,5 @@
 import React from 'react'
 import ProductCard from '../components/ProductCard'
-import TestComponent from '../components/TestComponent'
 
 const Home = () => {
   // TODO: Fetch products from API
@@ -37,7 +36,6 @@ const Home = () => {
 
   return (
     <div>
-      <TestComponent />
       <h1 className="text-3xl font-bold mb-8">Latest Products</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map(product => (

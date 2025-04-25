@@ -6,7 +6,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/cart')
+    fetch('/carts')
       .then(response => response.json())
       .then(data => {
         setCart(data)

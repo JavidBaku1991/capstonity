@@ -1,4 +1,5 @@
 const { environment } = require('@rails/webpacker')
+const webpack = require('webpack')
 
 // Remove the problematic node configuration
 environment.config.delete('node.dgram')
@@ -12,5 +13,14 @@ environment.config.set('node', {
   __dirname: true,
   __filename: true
 })
+
+// Add Bootstrap
+environment.plugins.prepend('Provide',
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+    Popper: ['popper.js', 'default']
+  })
+)
 
 module.exports = environment

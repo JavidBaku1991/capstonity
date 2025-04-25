@@ -1,6 +1,13 @@
+# frozen_string_literal: true
+
 class HomeController < ApplicationController
+  include ActionController::MimeResponds
+  include ActionController::ImplicitRender
+
   def index
-    # This action will render the React application
-    # No need to pass any instance variables as React will handle the frontend
+    respond_to do |format|
+      format.html { render 'home/index' }
+      format.json { render json: { message: 'Welcome to the API' } }
+    end
   end
 end 
