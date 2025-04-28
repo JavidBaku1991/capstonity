@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Products = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const { user, loading: authLoading } = useAuth()
+
+  console.log('Products component - Auth loading:', authLoading)
+  console.log('Products component - User state:', user)
+  console.log('Products component - Is user logged in?', !!user)
+  console.log('Products component - User email:', user?.email)
+  console.log('Products component - User name:', user?.name)
 
   useEffect(() => {
     fetch('/products.json')
@@ -17,7 +26,7 @@ const Products = () => {
       })
   }, [])
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -27,7 +36,20 @@ const Products = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-extrabold text-gray-900 mb-8">All Products</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-extrabold text-gray-900">All Products</h2>
+        {user && (
+          <div className="flex items-center space-x-4">
+            <Link
+              to="/products/new"
+              className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
+            >
+              Add New Product
+            </Link>
+            <span className="text-gray-700">Welcome, {user.name || user.email}</span>
+          </div>
+        )}
+      </div>
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
         {products.map((product) => (
           <div key={product.id} className="group">
@@ -44,7 +66,30 @@ const Products = () => {
             <div className="mt-4">
               <button
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                onClick={() => console.log('Add to cart:', product.id)}
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/line_items', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+                      },
+                      body: JSON.stringify({
+                        product_id: product.id,
+                        quantity: 1
+                      })
+                    });
+                    
+                    if (response.ok) {
+                      alert('Product added to cart successfully!');
+                    } else {
+                      alert('Failed to add product to cart');
+                    }
+                  } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    alert('An error occurred while adding to cart');
+                  }
+                }}
               >
                 Add to Cart
               </button>

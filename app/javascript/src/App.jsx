@@ -9,6 +9,7 @@ import SignUp from './components/SignUp'
 import Login from './components/Login'
 
 const App = () => {
+  console.log('APP - Component rendering')
   return (
     <AuthProvider>
       <Router>

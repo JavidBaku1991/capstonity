@@ -4,15 +4,16 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
 
   def current
-    render json: {
-      data: {
-        type: 'users',
-        id: current_user.id,
-        attributes: {
+    if current_user
+      render json: { 
+        user: {
+          id: current_user.id,
           email: current_user.email,
           name: current_user.name
         }
       }
-    }
+    else
+      render json: { user: nil }, status: :unauthorized
+    end
   end
 end 

@@ -23,12 +23,28 @@ Rails.application.routes.draw do
   # Current user route
   get '/users/current', to: 'users#current'
   
+  # Products routes
+  resources :products, only: [:index, :show, :new, :create] do
+    member do
+      post 'add_to_cart'
+    end
+  end
+
   # Cart routes
-  resources :carts, only: [:index, :create, :update, :destroy]
-  resources :products, only: [:index, :show, :create, :update, :destroy]
-  
-  # API endpoints
-  resources :products, only: [:index, :show], defaults: { format: :json }
+  resource :cart, only: [:show] do
+    member do
+      post 'checkout'
+    end
+  end
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      resources :products, only: [:index, :show]
+      resources :carts, only: [:show, :create, :update, :destroy]
+      resources :cart_items, only: [:create, :update, :destroy]
+    end
+  end
   
   # React Router catch-all - this should be the last route
   get '*path', to: 'home#index', constraints: ->(req) { !req.xhr? && req.format.html? }

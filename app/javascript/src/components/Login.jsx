@@ -9,6 +9,12 @@ const Login = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
 
+  const getCsrfToken = () => {
+    const token = document.querySelector('meta[name="csrf-token"]')?.content
+    console.log('LOGIN - CSRF token from meta:', token)
+    return token
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -21,34 +27,54 @@ const Login = () => {
       }
     }
 
-    console.log('Sending login request with data:', userData)
+    console.log('LOGIN - Sending login request with data:', userData)
 
     try {
+      const csrfToken = getCsrfToken()
+      console.log('LOGIN - Using CSRF token:', csrfToken)
+
       const response = await fetch('/users/sign_in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+          'X-CSRF-Token': csrfToken
         },
         credentials: 'include',
         body: JSON.stringify(userData)
       })
 
-      console.log('Response status:', response.status)
+      console.log('LOGIN - Response status:', response.status)
       const data = await response.json()
-      console.log('Response data:', data)
+      console.log('LOGIN - Full response data:', data)
 
       if (response.ok) {
-        console.log('Login successful, user data:', data.data.attributes)
-        login(data.data.attributes)
+        console.log('LOGIN - Login successful, user data:', data.data.attributes)
+        
+        // Update CSRF token if provided in response
+        if (data.csrf_token) {
+          const meta = document.querySelector('meta[name="csrf-token"]')
+          if (meta) {
+            meta.content = data.csrf_token
+            console.log('LOGIN - Updated CSRF token in meta tag')
+          }
+        }
+        
+        // Ensure we're passing the correct user data structure
+        const userDataToSet = {
+          email: data.data.attributes.email,
+          name: data.data.attributes.name
+        }
+        console.log('LOGIN - Passing to login function:', userDataToSet)
+        login(userDataToSet)
+        console.log('LOGIN - Navigation to home page')
         navigate('/')
       } else {
-        console.error('Login failed:', data)
+        console.error('LOGIN - Login failed:', data)
         setError(data.error || data.status?.message || 'Login failed')
       }
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('LOGIN - Login error:', err)
       setError('An error occurred during login')
     }
   }

@@ -1,10 +1,68 @@
-import React from 'react'
+import React, { useEffect, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const Layout = ({ children }) => {
-  const { user, logout } = useAuth()
-
+const Layout = memo(({ children }) => {
+  console.log('LAYOUT - Component rendering')
+  const { user, loading, logout } = useAuth()
+  
+  useEffect(() => {
+    console.log('LAYOUT - useEffect triggered')
+    console.log('LAYOUT - Current user:', user)
+    console.log('LAYOUT - Current loading state:', loading)
+  }, [user, loading])
+  
+  const renderAuthButtons = () => {
+    console.log('LAYOUT - Rendering auth buttons')
+    console.log('LAYOUT - Current user in renderAuthButtons:', user)
+    console.log('LAYOUT - Current loading state in renderAuthButtons:', loading)
+    
+    if (loading) {
+      console.log('LAYOUT - Still loading, showing nothing')
+      return null
+    }
+    
+    if (user) {
+      console.log('LAYOUT - User is logged in, showing user controls')
+      return (
+        <>
+          <Link
+            to="/products/new"
+            className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Add Product
+          </Link>
+          <span className="text-gray-700">Welcome, {user.name || user.email}</span>
+          <button
+            onClick={logout}
+            className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            Logout
+          </button>
+        </>
+      )
+    }
+    
+    console.log('LAYOUT - No user, showing login/signup buttons')
+    return (
+      <>
+        <Link
+          to="/login"
+          className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+        >
+          Login
+        </Link>
+        <Link
+          to="/signup"
+          className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+        >
+          Sign Up
+        </Link>
+      </>
+    )
+  }
+  
+  console.log('LAYOUT - About to render main component')
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -38,33 +96,8 @@ const Layout = ({ children }) => {
                 </Link>
               </div>
             </div>
-            <div className="flex items-center">
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-gray-700">Welcome, {user.name || user.email}</span>
-                  <button
-                    onClick={logout}
-                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <Link
-                    to="/login"
-                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              )}
+            <div className="flex items-center space-x-4">
+              {renderAuthButtons()}
             </div>
           </div>
         </div>
@@ -72,7 +105,7 @@ const Layout = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-grow">
-        {children}
+        {!loading && children}
       </main>
 
       {/* Footer */}
@@ -149,6 +182,8 @@ const Layout = ({ children }) => {
       </footer>
     </div>
   )
-}
+})
+
+Layout.displayName = 'Layout'
 
 export default Layout 

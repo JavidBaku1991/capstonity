@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext'
 const Navbar = () => {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  
+  console.log('NAVBAR RENDERED - User:', user)  // This should be very visible
 
   const handleLogout = async () => {
     await logout()
