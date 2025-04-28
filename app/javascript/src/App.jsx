@@ -7,6 +7,7 @@ import Products from './components/Products'
 import Cart from './components/Cart'
 import SignUp from './components/SignUp'
 import Login from './components/Login'
+import AddProduct from './components/AddProduct'
 
 const App = () => {
   console.log('APP - Component rendering')
@@ -20,6 +21,7 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/products/new" element={<AddProduct />} />
           </Routes>
         </Layout>
       </Router>
