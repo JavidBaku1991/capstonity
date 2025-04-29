@@ -6,6 +6,7 @@ const AddProduct = () => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
+  const [stock, setStock] = useState('')
   const [image, setImage] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -33,6 +34,7 @@ const AddProduct = () => {
     formData.append('product[name]', name)
     formData.append('product[description]', description)
     formData.append('product[price]', price)
+    formData.append('product[stock]', stock)
     if (image) {
       formData.append('product[image]', image)
     }
@@ -115,6 +117,21 @@ const AddProduct = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="stock" className="block text-sm font-medium text-gray-700">
+              Stock
+            </label>
+            <input
+              type="number"
+              id="stock"
+              required
+              min="0"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
             />
           </div>
 
