@@ -46,7 +46,7 @@ const Products = () => {
             >
               Add New Product
             </Link>
-            <span className="text-gray-700">Welcome, {user.name || user.email}</span>
+          
           </div>
         )}
       </div>
