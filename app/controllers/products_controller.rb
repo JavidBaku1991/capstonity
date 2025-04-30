@@ -1,26 +1,31 @@
 class ProductsController < ApplicationController
+  before_action :authenticate_user!, only: [:create]
+
   def index
-    @products = Product.all.map do |product|
+    @products = Product.includes(:user).all.map do |product|
       product.as_json.merge(
-        image_url: product.image.attached? ? url_for(product.image) : nil
+        image_url: product.image.attached? ? url_for(product.image) : nil,
+        user_name: product.user.name
       )
     end
     render json: @products
   end
 
   def show
-    @product = Product.find(params[:id])
+    @product = Product.includes(:user).find(params[:id])
     render json: @product.as_json.merge(
-      image_url: @product.image.attached? ? url_for(@product.image) : nil
+      image_url: @product.image.attached? ? url_for(@product.image) : nil,
+      user_name: @product.user.name
     )
   end
 
   def create
-    @product = Product.new(product_params)
+    @product = current_user.products.new(product_params)
     
     if @product.save
       render json: @product.as_json.merge(
-        image_url: @product.image.attached? ? url_for(@product.image) : nil
+        image_url: @product.image.attached? ? url_for(@product.image) : nil,
+        user_name: current_user.name
       ), status: :created
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity

@@ -63,6 +63,7 @@ const Products = () => {
             <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
             <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
             <p className="mt-2 text-sm text-gray-500">{product.description}</p>
+            <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
             <div className="mt-4">
               <button
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
