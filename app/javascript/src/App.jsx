@@ -1,31 +1,44 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
-import Home from './components/Home'
-import Products from './components/Products'
-import Cart from './components/Cart'
-import SignUp from './components/SignUp'
-import Login from './components/Login'
-import AddProduct from './components/AddProduct'
+
+// Lazy load components
+const Home = lazy(() => import('./components/Home'))
+const Products = lazy(() => import('./components/Products'))
+const Cart = lazy(() => import('./components/Cart'))
+const SignUp = lazy(() => import('./components/SignUp'))
+const Login = lazy(() => import('./components/Login'))
+const AddProduct = lazy(() => import('./components/AddProduct'))
+const Profile = lazy(() => import('./components/Profile'))
+
+// Loading component
+const Loading = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+)
 
 const App = () => {
   console.log('APP - Component rendering')
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/products/new" element={<AddProduct />} />
-          </Routes>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/products/new" element={<AddProduct />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+          </Suspense>
         </Layout>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   )
 }
 

@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   # Current user route
   get '/users/current', to: 'users#current'
   
+  # User products route
+  get '/users/:id/products', to: 'users#products'
+  
   # Products routes
   resources :products, only: [:index, :show, :new, :create] do
     member do

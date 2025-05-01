@@ -32,6 +32,12 @@ const Layout = memo(({ children }) => {
           >
             Add Product
           </Link>
+          <Link
+            to="/profile"
+            className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            Profile
+          </Link>
           <span className="text-gray-700">Welcome, {user.name || user.email}</span>
           <button
             onClick={logout}

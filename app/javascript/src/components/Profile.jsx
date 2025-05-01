@@ -7,22 +7,29 @@ const Profile = () => {
   const [userProducts, setUserProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
+  console.log('PROFILE - Component rendering')
+  console.log('PROFILE - Current user:', user)
+
   useEffect(() => {
+    console.log('PROFILE - useEffect triggered')
     if (user) {
+      console.log('PROFILE - Fetching products for user:', user.id)
       fetch(`/users/${user.id}/products`)
         .then(response => response.json())
         .then(data => {
+          console.log('PROFILE - Products data:', data)
           setUserProducts(data)
           setLoading(false)
         })
         .catch(error => {
-          console.error('Error fetching user products:', error)
+          console.error('PROFILE - Error fetching user products:', error)
           setLoading(false)
         })
     }
   }, [user])
 
   if (!user) {
+    console.log('PROFILE - No user, showing login prompt')
     return (
       <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div className="text-center">
@@ -39,6 +46,7 @@ const Profile = () => {
   }
 
   if (loading) {
+    console.log('PROFILE - Loading state')
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -46,6 +54,7 @@ const Profile = () => {
     )
   }
 
+  console.log('PROFILE - Rendering profile content')
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
