@@ -48,8 +48,14 @@ gem 'bcrypt', '~> 3.1.7'
 gem "react-rails"
 gem "webpacker", "~> 5.4"
 
+# CSS preprocessor
+gem 'sassc-rails'
+
 # AWS SDK for S3
 gem 'aws-sdk-s3', '~> 1.0'
+
+# Admin interface
+gem 'rails_admin', '~> 3.1'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Mount Rails Admin
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  
   # Root route
   root 'home#index'
   
