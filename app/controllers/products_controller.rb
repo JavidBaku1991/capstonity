@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :authenticate_user!, only: [:create]
+  before_action :authenticate_user!, only: [:create, :destroy]
+  before_action :set_product, only: [:show, :destroy]
 
   def index
     @products = Product.includes(:user).all.map do |product|
@@ -12,7 +13,6 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.includes(:user).find(params[:id])
     render json: @product.as_json.merge(
       image_url: @product.image.attached? ? url_for(@product.image) : nil,
       user_name: @product.user.name
@@ -37,7 +37,20 @@ class ProductsController < ApplicationController
     end
   end
 
+  def destroy
+    if @product.user_id == current_user.id
+      @product.destroy
+      head :no_content
+    else
+      render json: { error: 'Not authorized to delete this product' }, status: :unauthorized
+    end
+  end
+
   private
+
+  def set_product
+    @product = Product.find(params[:id])
+  end
 
   def product_params
     params.require(:product).permit(:name, :description, :price, :stock, :image)

@@ -7,6 +7,8 @@ const Profile = () => {
   const [userProducts, setUserProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [productToDelete, setProductToDelete] = useState(null)
 
   console.log('PROFILE - Component rendering')
   console.log('PROFILE - Current user:', user)
@@ -41,6 +43,31 @@ const Profile = () => {
       setLoading(false)
     }
   }, [user])
+
+  const handleDelete = async (productId) => {
+    try {
+      const response = await fetch(`/products/${productId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        setUserProducts(userProducts.filter(product => product.id !== productId))
+        setShowDeleteModal(false)
+        setProductToDelete(null)
+      } else {
+        throw new Error('Failed to delete product')
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      setError('Failed to delete product. Please try again later.')
+    }
+  }
+
+  const openDeleteModal = (product) => {
+    setProductToDelete(product)
+    setShowDeleteModal(true)
+  }
 
   if (!user) {
     console.log('PROFILE - No user, showing login prompt')
@@ -79,6 +106,7 @@ const Profile = () => {
   }
 
   console.log('PROFILE - Rendering profile content')
+  console.log('PROFILE - Number of products:', userProducts.length)
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -102,20 +130,29 @@ const Profile = () => {
       <div className="mt-8">
         <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">My Products</h3>
         <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {userProducts.map((product) => (
-            <div key={product.id} className="group">
-              <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
-                <img
-                  src={product.image_url || "https://via.placeholder.com/300"}
-                  alt={product.name}
-                  className="w-full h-full object-center object-cover group-hover:opacity-75"
-                />
+          {userProducts.map((product) => {
+            console.log('PROFILE - Rendering product:', product)
+            return (
+              <div key={product.id} className="group relative">
+                <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+                  <img
+                    src={product.image_url || "https://via.placeholder.com/300"}
+                    alt={product.name}
+                    className="w-full h-full object-center object-cover group-hover:opacity-75"
+                  />
+                </div>
+                <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
+                <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
+                <p className="mt-2 text-sm text-gray-500">{product.description}</p>
+                <button
+                  onClick={() => openDeleteModal(product)}
+                  className="mt-2 text-red-600 hover:text-red-800 text-sm font-medium"
+                >
+                  Delete Product
+                </button>
               </div>
-              <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
-              <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-              <p className="mt-2 text-sm text-gray-500">{product.description}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
         {userProducts.length === 0 && (
           <div className="text-center py-12">
@@ -129,6 +166,35 @@ const Profile = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Delete Product</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Are you sure you want to delete "{productToDelete?.name}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false)
+                  setProductToDelete(null)
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(productToDelete.id)}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

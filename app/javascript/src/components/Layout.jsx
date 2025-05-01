@@ -1,17 +1,27 @@
-import React, { useEffect, memo } from 'react'
+import React, { useEffect, memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Layout = memo(({ children }) => {
   console.log('LAYOUT - Component rendering')
   const { user, loading, logout } = useAuth()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   
   useEffect(() => {
     console.log('LAYOUT - useEffect triggered')
     console.log('LAYOUT - Current user:', user)
     console.log('LAYOUT - Current loading state:', loading)
   }, [user, loading])
-  
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const handleLogout = () => {
+    setIsMenuOpen(false)
+    logout()
+  }
+
   const renderAuthButtons = () => {
     console.log('LAYOUT - Rendering auth buttons')
     console.log('LAYOUT - Current user in renderAuthButtons:', user)
@@ -25,27 +35,48 @@ const Layout = memo(({ children }) => {
     if (user) {
       console.log('LAYOUT - User is logged in, showing user controls')
       return (
-        <>
-          <Link
-            to="/products/new"
-            className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
-          >
-            Add Product
-          </Link>
-          <Link
-            to="/profile"
-            className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Profile
-          </Link>
-          <span className="text-gray-700">Welcome, {user.name || user.email}</span>
+        <div className="relative">
           <button
-            onClick={logout}
-            className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            onClick={toggleMenu}
+            className="flex items-center text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
           >
-            Logout
+            <span className="mr-2">Welcome, {user.name || user.email}</span>
+            <svg
+              className={`h-5 w-5 transition-transform ${isMenuOpen ? 'transform rotate-180' : ''}`}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
-        </>
+          
+          {isMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+              <div className="py-1" role="menu" aria-orientation="vertical">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  role="menuitem"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  role="menuitem"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       )
     }
     
@@ -104,14 +135,6 @@ const Layout = memo(({ children }) => {
             </div>
             <div className="flex items-center space-x-4">
               {renderAuthButtons()}
-              {user && (
-                <Link
-                  to="/profile"
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Profile
-                </Link>
-              )}
             </div>
           </div>
         </div>

@@ -33,7 +33,7 @@ const Navbar = () => {
                   Add Product
                 </Link>
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">Welcome, {user.name || user.email}</span>
+                  <span className="text-gray-600">{user.name || user.email}</span>
                   <Link 
                     to="/profile" 
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

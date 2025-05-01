@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   get '/users/:id/products', to: 'users#products'
   
   # Products routes
-  resources :products, only: [:index, :show, :new, :create] do
+  resources :products, only: [:index, :show, :new, :create, :destroy] do
     member do
       post 'add_to_cart'
     end
