@@ -6,25 +6,39 @@ const Profile = () => {
   const { user } = useAuth()
   const [userProducts, setUserProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   console.log('PROFILE - Component rendering')
   console.log('PROFILE - Current user:', user)
 
   useEffect(() => {
     console.log('PROFILE - useEffect triggered')
-    if (user) {
+    if (user && user.id) {
       console.log('PROFILE - Fetching products for user:', user.id)
-      fetch(`/users/${user.id}/products`)
-        .then(response => response.json())
+      const url = `/users/${user.id}/products`
+      console.log('PROFILE - Fetch URL:', url)
+      
+      fetch(url)
+        .then(response => {
+          console.log('PROFILE - Response status:', response.status)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          return response.json()
+        })
         .then(data => {
           console.log('PROFILE - Products data:', data)
           setUserProducts(data)
           setLoading(false)
+          setError(null)
         })
         .catch(error => {
           console.error('PROFILE - Error fetching user products:', error)
+          setError('Failed to load products. Please try again later.')
           setLoading(false)
         })
+    } else {
+      setLoading(false)
     }
   }, [user])
 
@@ -50,6 +64,16 @@ const Profile = () => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <div className="text-center text-red-600">
+          <p>{error}</p>
+        </div>
       </div>
     )
   }

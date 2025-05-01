@@ -21,8 +21,8 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
           const data = await response.json()
           console.log('Auth check response data:', data)
-          if (data.data && data.data.attributes) {
-            setUser(data.data.attributes)
+          if (data.user) {
+            setUser(data.user)
           }
         } else {
           console.log('No active session found')
@@ -51,8 +51,9 @@ export const AuthProvider = ({ children }) => {
         method: 'DELETE',
         credentials: 'include'
       })
-      console.log('Logout response status:', response.status)
-      setUser(null)
+      if (response.ok) {
+        setUser(null)
+      }
     } catch (error) {
       console.error('Logout failed:', error)
     }
