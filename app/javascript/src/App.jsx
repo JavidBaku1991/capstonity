@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Lazy load components
 const Home = lazy(() => import('./components/Home'))
@@ -24,19 +25,21 @@ const App = () => {
   return (
     <Router>
       <AuthProvider>
-        <Layout>
-          <Suspense fallback={<Loading />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/products/new" element={<AddProduct />} />
-              <Route path="/profile" element={<Profile />} />
-            </Routes>
-          </Suspense>
-        </Layout>
+        <ErrorBoundary>
+          <Layout>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/products/new" element={<AddProduct />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </Suspense>
+          </Layout>
+        </ErrorBoundary>
       </AuthProvider>
     </Router>
   )
