@@ -26,6 +26,41 @@ const Products = () => {
       })
   }, [])
 
+  const handleAddToCart = async (product) => {
+    try {
+      console.log('Adding product to cart:', product.id);
+      console.log('Current session:', document.cookie);
+      
+      const response = await fetch('/api/v1/cart_items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          product_id: product.id,
+          quantity: 1
+        })
+      });
+      
+      console.log('Add to cart response status:', response.status);
+      const data = await response.json();
+      console.log('Add to cart response data:', data);
+      
+      if (response.ok) {
+        console.log('Product added to cart successfully:', data);
+        alert('Product added to cart successfully!');
+      } else {
+        console.error('Failed to add product to cart:', data);
+        alert('Failed to add product to cart: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('An error occurred while adding to cart');
+    }
+  };
+
   if (loading || authLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -46,7 +81,6 @@ const Products = () => {
             >
               Add New Product
             </Link>
-          
           </div>
         )}
       </div>
@@ -67,30 +101,7 @@ const Products = () => {
             <div className="mt-4">
               <button
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/line_items', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
-                      },
-                      body: JSON.stringify({
-                        product_id: product.id,
-                        quantity: 1
-                      })
-                    });
-                    
-                    if (response.ok) {
-                      alert('Product added to cart successfully!');
-                    } else {
-                      alert('Failed to add product to cart');
-                    }
-                  } catch (error) {
-                    console.error('Error adding to cart:', error);
-                    alert('An error occurred while adding to cart');
-                  }
-                }}
+                onClick={() => handleAddToCart(product)}
               >
                 Add to Cart
               </button>

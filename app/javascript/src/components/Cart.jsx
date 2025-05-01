@@ -6,26 +6,46 @@ const Cart = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/carts')
-      .then(response => response.json())
+    console.log('Cart component mounted, fetching cart data...');
+    fetch('/api/v1/carts/current', {
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        console.log('Cart response status:', response.status);
+        console.log('Cart response headers:', response.headers);
+        return response.json();
+      })
       .then(data => {
-        setCart(data)
-        setLoading(false)
+        console.log('Cart data received:', data);
+        if (data && data.line_items) {
+          setCart(data);
+        } else {
+          console.error('Invalid cart data received:', data);
+          setCart({ line_items: [] });
+        }
+        setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching cart:', error)
-        setLoading(false)
-      })
-  }, [])
+        console.error('Error fetching cart:', error);
+        setLoading(false);
+      });
+  }, []);
 
   const handleRemoveItem = (lineItemId) => {
-    fetch(`/line_items/${lineItemId}`, {
+    console.log('Removing item:', lineItemId);
+    fetch(`/api/v1/cart_items/${lineItemId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include'
     })
       .then(response => {
+        console.log('Remove item response status:', response.status);
         if (response.ok) {
           setCart(prevCart => ({
             ...prevCart,
@@ -43,6 +63,8 @@ const Cart = () => {
       </div>
     )
   }
+
+  console.log('Rendering cart with data:', cart);
 
   return (
     <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">

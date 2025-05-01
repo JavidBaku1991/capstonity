@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_format
   before_action :set_csrf_cookie
+  before_action :set_session_cookie
 
   protected
 
@@ -57,5 +58,17 @@ class ApplicationController < ActionController::Base
     else
       super
     end
+  end
+
+  def set_session_cookie
+    cookies['_session_id'] = {
+      value: session.id,
+      secure: Rails.env.production?,
+      same_site: :lax
+    }
+  end
+
+  def render_error(status, message)
+    render json: { error: message }, status: status
   end
 end
