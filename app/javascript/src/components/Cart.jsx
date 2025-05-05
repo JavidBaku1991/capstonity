@@ -74,12 +74,17 @@ const Cart = () => {
         throw new Error('Failed to update quantity');
       })
       .then(updatedItem => {
-        setCart(prevCart => ({
-          ...prevCart,
-          line_items: prevCart.line_items.map(item =>
-            item.id === lineItemId ? { ...item, quantity: newQuantity } : item
-          )
-        }));
+        // Fetch the updated cart to get the new total
+        return fetch('/api/v1/carts/current', {
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json());
+      })
+      .then(updatedCart => {
+        setCart(updatedCart);
       })
       .catch(error => console.error('Error updating quantity:', error));
   }
