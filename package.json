@@ -4,6 +4,8 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@rails/webpacker": "5.4.3",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.3.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bootstrap": "^5.3.5",
     "css-loader": "6.8.1",

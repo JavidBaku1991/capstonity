@@ -12,6 +12,7 @@ const SignUp = lazy(() => import('./components/SignUp'))
 const Login = lazy(() => import('./components/Login'))
 const AddProduct = lazy(() => import('./components/AddProduct'))
 const Profile = lazy(() => import('./components/Profile'))
+const Checkout = lazy(() => import('./components/Checkout'))
 
 // Loading component
 const Loading = () => (
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/products/new" element={<AddProduct />} />

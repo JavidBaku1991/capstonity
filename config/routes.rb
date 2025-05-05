@@ -53,6 +53,7 @@ Rails.application.routes.draw do
         end
       end
       resources :cart_items, only: [:create, :update, :destroy]
+      post 'create_payment_intent', to: 'payments#create_payment_intent'
     end
   end
   
