@@ -56,6 +56,34 @@ const Cart = () => {
       .catch(error => console.error('Error removing item:', error))
   }
 
+  const handleUpdateQuantity = (lineItemId, newQuantity) => {
+    if (newQuantity < 1) return; // Prevent quantity from going below 1
+
+    fetch(`/api/v1/cart_items/${lineItemId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ cart_item: { quantity: newQuantity } })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Failed to update quantity');
+      })
+      .then(updatedItem => {
+        setCart(prevCart => ({
+          ...prevCart,
+          line_items: prevCart.line_items.map(item =>
+            item.id === lineItemId ? { ...item, quantity: newQuantity } : item
+          )
+        }));
+      })
+      .catch(error => console.error('Error updating quantity:', error));
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -104,7 +132,21 @@ const Cart = () => {
                       <p className="mt-1 text-sm text-gray-500">{item.product.description}</p>
                     </div>
                     <div className="flex-1 flex items-end justify-between text-sm">
-                      <p className="text-gray-500">Qty {item.quantity}</p>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          className="p-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                          -
+                        </button>
+                        <span className="text-gray-500">Qty {item.quantity}</span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          className="p-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
                       <button
                         type="button"
                         className="font-medium text-red-600 hover:text-red-500"
