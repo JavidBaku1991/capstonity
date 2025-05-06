@@ -7,6 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 // Lazy load components
 const Home = lazy(() => import('./components/Home'))
 const Products = lazy(() => import('./components/Products'))
+const ProductDetails = lazy(() => import('./components/ProductDetails'))
 const Cart = lazy(() => import('./components/Cart'))
 const SignUp = lazy(() => import('./components/SignUp'))
 const Login = lazy(() => import('./components/Login'))
@@ -32,6 +33,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/signup" element={<SignUp />} />

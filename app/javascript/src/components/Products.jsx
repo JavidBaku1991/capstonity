@@ -28,14 +28,11 @@ const Products = () => {
 
   const handleAddToCart = async (product) => {
     try {
-      console.log('Adding product to cart:', product.id);
-      console.log('Current session:', document.cookie);
-      
       const response = await fetch('/api/v1/cart_items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+          'Accept': 'application/json'
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -43,20 +40,15 @@ const Products = () => {
           quantity: 1
         })
       });
-      
-      console.log('Add to cart response status:', response.status);
-      const data = await response.json();
-      console.log('Add to cart response data:', data);
-      
+
       if (response.ok) {
-        console.log('Product added to cart successfully:', data);
         alert('Product added to cart successfully!');
       } else {
-        console.error('Failed to add product to cart:', data);
-        alert('Failed to add product to cart: ' + (data.error || 'Unknown error'));
+        const error = await response.json();
+        alert('Failed to add product to cart: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error:', error);
       alert('An error occurred while adding to cart');
     }
   };
@@ -86,7 +78,7 @@ const Products = () => {
       </div>
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
         {products.map((product) => (
-          <div key={product.id} className="group">
+          <div key={product.id} className="group relative bg-white p-4 rounded-lg shadow-md">
             <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
               <img
                 src={product.image_url || "https://via.placeholder.com/300"}
@@ -94,17 +86,25 @@ const Products = () => {
                 className="w-full h-full object-center object-cover group-hover:opacity-75"
               />
             </div>
-            <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
-            <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-            <p className="mt-2 text-sm text-gray-500">{product.description}</p>
-            <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
             <div className="mt-4">
+              <h3 className="text-sm text-gray-700 font-medium">{product.name}</h3>
+              <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
+              <p className="mt-2 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+              <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
+            </div>
+            <div className="mt-4 flex flex-col space-y-2">
               <button
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
                 onClick={() => handleAddToCart(product)}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
               >
                 Add to Cart
               </button>
+              <Link
+                to={`/products/${product.id}`}
+                className="w-full text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
+              >
+                View Details
+              </Link>
             </div>
           </div>
         ))}
