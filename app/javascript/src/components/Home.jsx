@@ -24,6 +24,33 @@ const Home = () => {
       })
   }, [])
 
+  const handleAddToCart = async (productId) => {
+    try {
+      const response = await fetch('/api/v1/cart_items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: 1
+        })
+      });
+
+      if (response.ok) {
+        alert('Product added to cart successfully!');
+      } else {
+        const error = await response.json();
+        alert('Failed to add product to cart: ' + (error.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while adding to cart');
+    }
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -59,7 +86,7 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
             {recentProducts.map((product) => (
-              <div key={product.id} className="group">
+              <div key={product.id} className="group relative bg-white p-4 rounded-lg shadow-md">
                 <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
                   <img
                     src={product.image_url || "https://via.placeholder.com/300"}
@@ -67,10 +94,26 @@ const Home = () => {
                     className="w-full h-full object-center object-cover group-hover:opacity-75"
                   />
                 </div>
-                <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
-                <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-                <p className="mt-2 text-sm text-gray-500">{product.description}</p>
-                <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
+                <div className="mt-4">
+                  <h3 className="text-sm text-gray-700 font-medium">{product.name}</h3>
+                  <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
+                  <p className="mt-2 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+                  <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
+                </div>
+                <div className="mt-4 flex flex-col space-y-2">
+                  <button
+                    onClick={() => handleAddToCart(product.id)}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+                  >
+                    Buy Now
+                  </button>
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="w-full text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
+                  >
+                    View Details
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

@@ -23,4 +23,21 @@ environment.plugins.prepend('Provide',
   })
 )
 
+// Configure PostCSS
+const postcssLoader = {
+  loader: 'postcss-loader',
+  options: {
+    postcssOptions: {
+      plugins: [
+        require('tailwindcss'),
+        require('autoprefixer')
+      ]
+    }
+  }
+}
+
+// Add PostCSS loader to the CSS loader
+const cssLoader = environment.loaders.get('css')
+cssLoader.use.push(postcssLoader)
+
 module.exports = environment
