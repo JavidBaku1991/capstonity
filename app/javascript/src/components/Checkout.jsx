@@ -8,7 +8,36 @@ import {
 } from '@stripe/react-stripe-js';
 
 // Initialize Stripe with the key from Rails
-const stripePromise = loadStripe(window.stripePublishableKey);
+const getStripePromise = () => {
+  const key = window.stripePublishableKey;
+  console.log('Initializing Stripe with key:', key ? 'present' : 'missing');
+  
+  if (!key) {
+    console.error('Stripe publishable key is missing! Please check your environment variables.');
+    return null;
+  }
+  
+  try {
+    return loadStripe(key);
+  } catch (error) {
+    console.error('Error initializing Stripe:', error);
+    return null;
+  }
+};
+
+// Wait for the key to be available
+const stripePromise = new Promise((resolve) => {
+  if (window.stripePublishableKey) {
+    resolve(getStripePromise());
+  } else {
+    const checkKey = setInterval(() => {
+      if (window.stripePublishableKey) {
+        clearInterval(checkKey);
+        resolve(getStripePromise());
+      }
+    }, 100);
+  }
+});
 
 const CheckoutForm = ({ cart, onSuccess }) => {
   const stripe = useStripe();
@@ -27,6 +56,50 @@ const CheckoutForm = ({ cart, onSuccess }) => {
     phone: ''
   });
 
+  const safeCredentials = (options = {}) => {
+    return {
+      ...options,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...options.headers
+      }
+    };
+  };
+
+  const handleErrors = (response) => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    return response.json();
+  };
+
+  const initiateStripeCheckout = async (booking_id) => {
+    try {
+      const response = await fetch(
+        `/api/charges?booking_id=${booking_id}&cancel_url=${window.location.pathname}`,
+        safeCredentials({
+          method: 'POST',
+        })
+      );
+      
+      const data = await handleErrors(response);
+      const stripe = await loadStripe(window.stripePublishableKey);
+      
+      const result = await stripe.redirectToCheckout({
+        sessionId: data.charge.checkout_session_id,
+      });
+
+      if (result.error) {
+        setError(result.error.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('An error occurred while processing your payment.');
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -38,65 +111,67 @@ const CheckoutForm = ({ cart, onSuccess }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setProcessing(true);
-
-    if (!stripe || !elements) {
-      return;
-    }
+    setError(null);
 
     try {
-      // Create payment intent on the server
-      const response = await fetch('/api/v1/create_payment_intent', {
+      // Ensure amount is a valid integer in cents
+      const amount = Math.round(cart.total_price * 100);
+      console.log('Creating payment intent with amount:', amount);
+
+      // First create a payment intent
+      const paymentIntentResponse = await fetch('/api/v1/create_payment_intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: amount,
+          currency: 'usd'
+        })
+      });
+
+      const responseData = await paymentIntentResponse.json();
+      
+      if (!paymentIntentResponse.ok) {
+        throw new Error(responseData.error || 'Failed to create payment intent');
+      }
+
+      console.log('Payment intent created:', responseData);
+
+      // Create a booking or order ID
+      const bookingResponse = await fetch('/api/v1/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         credentials: 'include',
         body: JSON.stringify({
-          amount: cart.total_price * 100, // Convert to cents
+          amount: amount,
           currency: 'usd',
-          customer_info: formData
+          customer_info: formData,
+          line_items: cart.line_items,
+          payment_intent_id: responseData.clientSecret
         }),
       });
 
-      const { clientSecret } = await response.json();
-
-      // Confirm the payment
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: elements.getElement(CardElement),
-            billing_details: {
-              name: `${formData.firstName} ${formData.lastName}`,
-              email: formData.email,
-              phone: formData.phone,
-              address: {
-                line1: formData.address,
-                city: formData.city,
-                state: formData.state,
-                postal_code: formData.zipCode,
-                country: formData.country,
-              },
-            },
-          },
-        }
-      );
-
-      if (stripeError) {
-        setError(stripeError.message);
-      } else if (paymentIntent.status === 'succeeded') {
-        // Clear the cart and redirect to success page
-        await fetch('/api/v1/carts/current', {
-          method: 'DELETE',
-          credentials: 'include',
-        });
-        onSuccess();
+      if (!bookingResponse.ok) {
+        const bookingError = await bookingResponse.json();
+        throw new Error(bookingError.error || 'Failed to create booking');
       }
-    } catch (err) {
-      setError('An error occurred while processing your payment.');
-    }
 
-    setProcessing(false);
+      const bookingData = await bookingResponse.json();
+      console.log('Booking created:', bookingData);
+      
+      // Use the existing initiateStripeCheckout method
+      await initiateStripeCheckout(bookingData.id);
+
+    } catch (err) {
+      console.error('Payment error:', err);
+      setError(err.message || 'An error occurred while processing your payment.');
+      setProcessing(false);
+    }
   };
 
   return (
