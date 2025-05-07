@@ -3,12 +3,14 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 
 const Profile = () => {
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [userProducts, setUserProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [productToDelete, setProductToDelete] = useState(null)
+  const [uploadError, setUploadError] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   console.log('PROFILE - Component rendering')
   console.log('PROFILE - Current user:', user)
@@ -69,6 +71,42 @@ const Profile = () => {
     setShowDeleteModal(true)
   }
 
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setUploadError(null)
+
+    const formData = new FormData()
+    formData.append('user[avatar]', file)
+
+    try {
+      const response = await fetch('/users/update', {
+        method: 'PATCH',
+        credentials: 'include',
+        body: formData
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Update the user context with new data
+        updateUser({
+          avatar_url: data.user.avatar_url
+        })
+        setUploadError(null)
+      } else {
+        setUploadError(data.errors?.[0] || 'Failed to upload avatar')
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+      setUploadError('Failed to upload avatar. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   if (!user) {
     console.log('PROFILE - No user, showing login prompt')
     return (
@@ -116,10 +154,43 @@ const Profile = () => {
         <div className="border-t border-gray-200">
           <dl>
             <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt className="text-sm font-medium text-gray-500">Profile Picture</dt>
+              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    <img
+                      className="h-24 w-24 rounded-full object-cover"
+                      src={user.avatar_url || "https://via.placeholder.com/96"}
+                      alt={user.name}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Change profile picture
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="mt-1 block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-blue-50 file:text-blue-700
+                          hover:file:bg-blue-100"
+                      />
+                    </label>
+                    {uploadError && (
+                      <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+                    )}
+                  </div>
+                </div>
+              </dd>
+            </div>
+            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Full name</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.name}</dd>
             </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt className="text-sm font-medium text-gray-500">Email address</dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.email}</dd>
             </div>

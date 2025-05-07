@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   
   # Current user route
   get '/users/current', to: 'users#current'
+  patch '/users/update', to: 'users#update'
   
   # User products route
   get '/users/:id/products', to: 'users#products'

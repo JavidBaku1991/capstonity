@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null)
         }
       } catch (error) {
+        console.error('Auth check error:', error)
         setUser(null)
       } finally {
         setLoading(false)
@@ -38,6 +39,14 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     console.log('Setting user data:', userData)
     setUser(userData)
+  }
+
+  const updateUser = (updatedData) => {
+    console.log('Updating user data:', updatedData)
+    setUser(prevUser => ({
+      ...prevUser,
+      ...updatedData
+    }))
   }
 
   const logout = async () => {
@@ -59,7 +68,8 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
-    logout
+    logout,
+    updateUser
   }
 
   return (
