@@ -5,11 +5,14 @@ class UsersController < ApplicationController
 
   def current
     if current_user
+      Rails.logger.info "Current user data: #{current_user.inspect}"
+      Rails.logger.info "Phone number: #{current_user.phone_number}"
       render json: { 
         user: {
           id: current_user.id,
           email: current_user.email,
-          name: current_user.name
+          name: current_user.name,
+          phone_number: current_user.phone_number
         }
       }
     else
