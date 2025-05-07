@@ -12,11 +12,9 @@ export const AuthProvider = ({ children }) => {
     // Check if user is already logged in
     const checkAuth = async () => {
       try {
-        console.log('Checking authentication status...')
         const response = await fetch('/users/current', {
           credentials: 'include'
         })
-        console.log('Auth check response status:', response.status)
         
         if (response.ok) {
           const data = await response.json()
@@ -25,11 +23,9 @@ export const AuthProvider = ({ children }) => {
             setUser(data.user)
           }
         } else {
-          console.log('No active session found')
           setUser(null)
         }
       } catch (error) {
-        console.error('Auth check failed:', error)
         setUser(null)
       } finally {
         setLoading(false)

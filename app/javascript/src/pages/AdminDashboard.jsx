@@ -9,17 +9,17 @@ const AdminDashboard = () => {
   ])
 
   const handleDeleteUser = (userId) => {
-    // TODO: Implement delete user logic
+    // implement delete user logic
     console.log('Delete user:', userId)
   }
 
   const handlePromoteToCoAdmin = (userId) => {
-    // TODO: Implement promote to co-admin logic
+    // mplement promote to co-admin logic
     console.log('Promote user to co-admin:', userId)
   }
 
   const handleDemoteFromCoAdmin = (userId) => {
-    // TODO: Implement demote from co-admin logic
+    // mplement demote from co-admin logic
     console.log('Demote co-admin to user:', userId)
   }
 

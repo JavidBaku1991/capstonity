@@ -18,7 +18,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // TODO: Implement login logic
+    // implement login logic
     console.log('Login form submitted:', formData)
     navigate('/')
   }

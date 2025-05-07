@@ -15,7 +15,7 @@ const AddProduct = lazy(() => import('./components/AddProduct'))
 const Profile = lazy(() => import('./components/Profile'))
 const Checkout = lazy(() => import('./components/Checkout'))
 
-// Loading component
+// Loding 
 const Loading = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

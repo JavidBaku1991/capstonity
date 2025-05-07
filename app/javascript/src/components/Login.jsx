@@ -51,7 +51,7 @@ const Login = () => {
       if (response.ok) {
         console.log('LOGIN - Login successful, user data:', data.data.attributes)
         
-        // Update CSRF token if provided in response
+        //  CSRF token 
         if (data.csrf_token) {
           const meta = document.querySelector('meta[name="csrf-token"]')
           if (meta) {
@@ -60,7 +60,7 @@ const Login = () => {
           }
         }
         
-        // Ensure we're passing the correct user data structure
+        //  we're passing the correct user data structure
         const userDataToSet = {
           email: data.data.attributes.email,
           name: data.data.attributes.name

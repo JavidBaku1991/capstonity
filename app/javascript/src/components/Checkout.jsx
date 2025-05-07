@@ -7,7 +7,6 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 
-// Initialize Stripe with the key from Rails
 const getStripePromise = () => {
   const key = window.stripePublishableKey;
   console.log('Initializing Stripe with key:', key ? 'present' : 'missing');
@@ -25,7 +24,6 @@ const getStripePromise = () => {
   }
 };
 
-// Wait for the key to be available
 const stripePromise = new Promise((resolve) => {
   if (window.stripePublishableKey) {
     resolve(getStripePromise());
@@ -114,11 +112,10 @@ const CheckoutForm = ({ cart, onSuccess }) => {
     setError(null);
 
     try {
-      // Ensure amount is a valid integer in cents
       const amount = Math.round(cart.total_price * 100);
       console.log('Creating payment intent with amount:', amount);
 
-      // First create a payment intent
+      //  create a payment intent
       const paymentIntentResponse = await fetch('/api/v1/create_payment_intent', {
         method: 'POST',
         headers: {
@@ -139,7 +136,6 @@ const CheckoutForm = ({ cart, onSuccess }) => {
 
       console.log('Payment intent created:', responseData);
 
-      // Create a booking or order ID
       const bookingResponse = await fetch('/api/v1/bookings', {
         method: 'POST',
         headers: {
