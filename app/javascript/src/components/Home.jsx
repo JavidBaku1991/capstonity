@@ -109,7 +109,7 @@ const Home = () => {
                   </button>
                   <Link
                     to={`/products/${product.id}`}
-                    className="w-full text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
+                    className=" text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
                   >
                     View Details
                   </Link>

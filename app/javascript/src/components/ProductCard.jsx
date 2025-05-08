@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
           <span className="text-lg font-bold">${product.price}</span>
           <Link
             to={`/products/${product.id}`}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
           >
             View Details
           </Link>
