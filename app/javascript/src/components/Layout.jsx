@@ -103,31 +103,31 @@ const Layout = memo(({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-lg">
+      <nav className="bg-transparent absolute top-0 left-0 w-full z-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Link to="/" className="text-xl font-bold text-blue-600">
+                <Link to="/" className="text-xl font-bold text-white">
                   Artisani
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
                   to="/"
-                  className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-white text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium hover:text-blue-200 hover:border-blue-200"
                 >
                   Home
                 </Link>
                 <Link
                   to="/products"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-white hover:border-blue-200 hover:text-blue-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Products
                 </Link>
                 <Link
                   to="/cart"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-white hover:border-blue-200 hover:text-blue-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Cart
                 </Link>

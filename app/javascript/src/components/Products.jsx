@@ -62,52 +62,59 @@ const Products = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-900">All Products</h2>
-        {user && (
-          <div className="flex items-center space-x-4">
-            <Link
-              to="/products/new"
-              className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
-            >
-              Add New Product
-            </Link>
-          </div>
-        )}
-      </div>
-      <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-        {products.map((product) => (
-          <div key={product.id} className="group relative bg-white p-4 rounded-lg shadow-md">
-            <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
-              <img
-                src={product.image_url || "https://via.placeholder.com/300"}
-                alt={product.name}
-                className="w-full h-full object-center object-cover group-hover:opacity-75"
-              />
-            </div>
-            <div className="mt-4">
-              <h3 className="text-sm text-gray-700 font-medium">{product.name}</h3>
-              <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-              <p className="mt-2 text-sm text-gray-500 line-clamp-2">{product.description}</p>
-              <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
-            </div>
-            <div className="mt-4 flex flex-col space-y-2">
-              <button
-                onClick={() => handleAddToCart(product)}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
-              >
-                Add to Cart
-              </button>
+    <div className="relative min-h-screen w-full" style={{
+      backgroundImage: 'url(/images/2.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}>
+      <div className="relative z-10 max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-extrabold text-white text-center w-full">All Products</h2>
+          {user && (
+            <div className="flex items-center space-x-4">
               <Link
-                to={`/products/${product.id}`}
-                className="w-full text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
+                to="/products/new"
+                className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium"
               >
-                View Details
+                Add New Product
               </Link>
             </div>
-          </div>
-        ))}
+          )}
+        </div>
+        <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+          {products.map((product) => (
+            <div key={product.id} className="group relative bg-white p-4 rounded-lg shadow-md">
+              <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+                <img
+                  src={product.image_url || "https://via.placeholder.com/300"}
+                  alt={product.name}
+                  className="w-full h-full object-center object-cover group-hover:opacity-75"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-sm text-gray-700 font-medium">{product.name}</h3>
+                <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
+                <p className="mt-2 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+                <p className="mt-2 text-sm text-gray-600">Posted by: {product.user_name}</p>
+              </div>
+              <div className="mt-4 flex flex-col space-y-2">
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+                >
+                  Add to Cart
+                </button>
+                <Link
+                  to={`/products/${product.id}`}
+                  className="w-full text-center text-blue-600 hover:text-blue-800 py-2 px-4 rounded-md border border-blue-600 hover:border-blue-800 transition duration-300"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

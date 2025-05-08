@@ -55,7 +55,7 @@ const Home = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <div 
-        className="relative min-h-[500px] flex items-center"
+        className="relative h-screen flex items-center"
         style={{
           backgroundImage: 'url(/images/hero-bg.jpg)',
           backgroundSize: 'cover',
@@ -69,7 +69,7 @@ const Home = () => {
           <p className="text-xl md:text-2xl mb-8">Discover amazing products at great prices</p>
           <Link 
             to="/products" 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300"
+            className="bg-transparent text-white font-bold py-3 px-6 rounded-lg border-2 border-white transition duration-300 hover:bg-blue-500 hover:text-black hover:border-blue-500"
           >
             Shop Now
           </Link>
