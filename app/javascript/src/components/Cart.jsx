@@ -126,7 +126,14 @@ const Cart = () => {
             <div className="flow-root">
               <ul className="-my-6 divide-y divide-gray-200">
                 {cart.line_items.map((item) => (
-                  <li key={item.id} className="py-6 flex">
+                  <li key={item.id} className="py-6 flex" style={{
+                    background: 'rgba(255, 255, 255, 0.35)',
+                    boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)',
+                    backdropFilter: 'blur(5px)',
+                    WebkitBackdropFilter: 'blur(5px)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(255,255,255,0.18)'
+                  }}>
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <img
                         src={item.product.image_url || "/images/1.png"}
