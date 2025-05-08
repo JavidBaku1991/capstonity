@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import ProductCard from './ProductCard'
 
 const Profile = () => {
   const { user, updateUser } = useAuth()
@@ -11,6 +12,17 @@ const Profile = () => {
   const [productToDelete, setProductToDelete] = useState(null)
   const [uploadError, setUploadError] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+
+  // Add Product form state
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [price, setPrice] = useState('')
+  const [stock, setStock] = useState('')
+  const [image, setImage] = useState(null)
+  const [addLoading, setAddLoading] = useState(false)
+  const [addError, setAddError] = useState('')
+
+  const navigate = useNavigate()
 
   console.log('PROFILE - Component rendering')
   console.log('PROFILE - Current user:', user)
@@ -107,6 +119,64 @@ const Profile = () => {
     }
   }
 
+  // Add Product form handlers
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0])
+    }
+  }
+
+  const handleAddProductSubmit = async (e) => {
+    e.preventDefault()
+    setAddLoading(true)
+    setAddError('')
+
+    if (!user) {
+      setAddError('You must be logged in to add a product')
+      setAddLoading(false)
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('product[name]', name)
+    formData.append('product[description]', description)
+    formData.append('product[price]', price)
+    formData.append('product[stock]', stock)
+    if (image) {
+      formData.append('product[image]', image)
+    }
+
+    try {
+      const response = await fetch('/products', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content
+        },
+        body: formData
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Add the new product to the user's products
+        setUserProducts([data, ...userProducts])
+        // Clear the form
+        setName('')
+        setDescription('')
+        setPrice('')
+        setStock('')
+        setImage(null)
+        setAddError('')
+      } else {
+        setAddError(data.error || 'Failed to create product')
+      }
+    } catch (err) {
+      setAddError('An error occurred while creating the product')
+    } finally {
+      setAddLoading(false)
+    }
+  }
+
   if (!user) {
     console.log('PROFILE - No user, showing login prompt')
     return (
@@ -143,105 +213,127 @@ const Profile = () => {
     )
   }
 
-  console.log('PROFILE - Rendering profile content')
-  console.log('PROFILE - Number of products:', userProducts.length)
   return (
-    <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
+    <div className="max-w-5xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+      <div className="bg-white shadow rounded-lg flex flex-col md:flex-row overflow-hidden">
+        {/* Left column: Profile info only */}
+        <div className="md:w-1/3 bg-white p-8 flex flex-col items-center border-r border-gray-200">
+          <img
+            className="h-28 w-28 rounded-full object-cover mb-4"
+            src={user.avatar_url || 'https://via.placeholder.com/96'}
+            alt={user.name}
+          />
+          <div className="text-center w-full">
+            <div className="font-medium text-lg mb-1">{user.name}</div>
+            <div className="text-gray-600 text-sm mb-1">{user.email}</div>
+            <div className="text-gray-600 text-sm mb-2">{user.phone_number}</div>
+            <label className="block text-xs text-gray-500 mb-2 cursor-pointer">
+              <span className="underline">Change profile picture</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            </label>
+            {uploadError && (
+              <p className="text-xs text-red-600 mb-2">{uploadError}</p>
+            )}
+          </div>
         </div>
-        <div className="border-t border-gray-200">
-          <dl>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Profile Picture</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0">
-                    <img
-                      className="h-24 w-24 rounded-full object-cover"
-                      src={user.avatar_url || "https://via.placeholder.com/96"}
-                      alt={user.name}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Change profile picture
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                        className="mt-1 block w-full text-sm text-gray-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-blue-50 file:text-blue-700
-                          hover:file:bg-blue-100"
-                      />
-                    </label>
-                    {uploadError && (
-                      <p className="mt-2 text-sm text-red-600">{uploadError}</p>
-                    )}
-                  </div>
-                </div>
-              </dd>
+        {/* Right column: Add a product form */}
+        <div className="md:w-2/3 p-8 flex flex-col justify-center">
+          <h2 className="text-3xl font-semibold mb-8 text-center">Add a product</h2>
+          {addError && (
+            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center" role="alert">
+              <span className="block sm:inline">{addError}</span>
             </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Full name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.name}</dd>
+          )}
+          <form className="flex flex-col gap-6" onSubmit={handleAddProductSubmit}>
+            <div className="flex items-center">
+              <label className="w-32 text-lg font-medium">Name</label>
+              <input
+                type="text"
+                className="flex-1 bg-gray-200 rounded-md px-4 py-2 ml-4"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Product name"
+              />
             </div>
-            <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Email address</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.email}</dd>
+            <div className="flex items-center">
+              <label className="w-32 text-lg font-medium">Descripton</label>
+              <textarea
+                className="flex-1 bg-gray-200 rounded-md px-4 py-2 ml-4 resize-none"
+                rows={3}
+                required
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="Product description"
+              />
             </div>
-            <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Phone Number</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.phone_number}</dd>
+            <div className="flex items-center">
+              <label className="w-32 text-lg font-medium">Price</label>
+              <input
+                type="number"
+                className="flex-1 bg-gray-200 rounded-md px-4 py-2 ml-4"
+                required
+                min="0"
+                step="0.01"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+                placeholder="Product price"
+              />
             </div>
-          </dl>
+            <div className="flex items-center">
+              <label className="w-32 text-lg font-medium">Stock</label>
+              <input
+                type="number"
+                className="flex-1 bg-gray-200 rounded-md px-4 py-2 ml-4"
+                required
+                min="0"
+                value={stock}
+                onChange={e => setStock(e.target.value)}
+                placeholder="Product stock"
+              />
+            </div>
+            <div className="flex items-center">
+              <label className="w-32 text-lg font-medium">Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="flex-1 ml-4"
+                onChange={handleImageChange}
+              />
+            </div>
+            <button
+              type="submit"
+              className="mt-4 bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700 self-end disabled:opacity-50"
+              disabled={addLoading}
+            >
+              {addLoading ? 'Adding Product...' : 'Add Product'}
+            </button>
+          </form>
         </div>
       </div>
-
-      <div className="mt-8">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">My Products</h3>
-        <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {userProducts.map((product) => {
-            console.log('PROFILE - Rendering product:', product)
-            return (
-              <div key={product.id} className="group relative">
-                <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
-                  <img
-                    src={product.image_url || "https://via.placeholder.com/300"}
-                    alt={product.name}
-                    className="w-full h-full object-center object-cover group-hover:opacity-75"
-                  />
-                </div>
-                <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
-                <p className="mt-1 text-lg font-medium text-gray-900">${product.price}</p>
-                <p className="mt-2 text-sm text-gray-500">{product.description}</p>
-                <button
-                  onClick={() => openDeleteModal(product)}
-                  className="mt-2 text-red-600 hover:text-red-800 text-sm font-medium"
-                >
-                  Delete Product
-                </button>
-              </div>
-            )
-          })}
-        </div>
-        {userProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">You haven't added any products yet.</p>
-            <Link
-              to="/products/new"
-              className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              Add Your First Product
-            </Link>
+      {/* My Products section at the bottom */}
+      <div className="mt-12">
+        <h3 className="text-2xl font-bold mb-6 text-gray-900">My Products</h3>
+        {userProducts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            {userProducts.map((product) => (
+              <ProductCard key={product.id} product={{
+                ...product,
+                image: product.image_url || 'https://via.placeholder.com/300',
+                title: product.name
+              }} />
+            ))}
           </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500">You haven't added any products yet.</div>
         )}
       </div>
-
+      {/* Delete modal remains unchanged */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
