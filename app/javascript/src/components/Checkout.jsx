@@ -374,9 +374,8 @@ const CheckoutForm = ({ cart, onSuccess }) => {
 };
 
 const Checkout = () => {
-  const [cart, setCart] = useState(null);
+  const [cart, setCart] = useState({ line_items: [] });
   const [loading, setLoading] = useState(true);
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     fetch('/api/v1/carts/current', {
@@ -405,103 +404,64 @@ const Checkout = () => {
     );
   }
 
-  if (success) {
-    return (
-      <div className="max-w-md mx-auto text-center py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Payment Successful!</h2>
-        <p className="text-gray-600 mb-8">Thank you for your purchase.</p>
-        <a
-          href="/products"
-          className="inline-block bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700"
-        >
-          Continue Shopping
-        </a>
-      </div>
-    );
-  }
-
-  if (!cart || cart.line_items.length === 0) {
-    return (
-      <div className="max-w-md mx-auto text-center py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-        <p className="text-gray-600 mb-8">Add some items to your cart before checking out.</p>
-        <a
-          href="/products"
-          className="inline-block bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700"
-        >
-          Browse Products
-        </a>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Checkout</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Order Summary */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
-            <div className="border-t border-gray-200 pt-4">
-              {cart.line_items.map((item) => (
-                <div key={item.id} className="flex items-center py-4">
-                  <div className="flex-shrink-0 w-16 h-16">
-                    <img
-                      src={item.product.image_url || "/images/1.png"}
-                      alt={item.product.name}
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">{item.product.name}</h3>
-                    <p className="mt-1 text-sm text-gray-500">Quantity: {item.quantity}</p>
-                    <p className="mt-1 text-sm font-medium text-gray-900">
-                      ${(item.product.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <div className="flex justify-between">
-                  <span className="text-base font-medium text-gray-900">Subtotal</span>
-                  <span className="text-base font-medium text-gray-900">
-                    ${cart.total_price}
-                  </span>
-                </div>
-                <div className="flex justify-between mt-2">
-                  <span className="text-sm text-gray-500">Shipping</span>
-                  <span className="text-sm text-gray-500">Calculated at next step</span>
-                </div>
-                <div className="flex justify-between mt-2">
-                  <span className="text-sm text-gray-500">Tax</span>
-                  <span className="text-sm text-gray-500">Calculated at next step</span>
-                </div>
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <div className="flex justify-between">
-                    <span className="text-lg font-medium text-gray-900">Total</span>
-                    <span className="text-lg font-medium text-gray-900">
-                      ${cart.total_price}
-                    </span>
-                  </div>
-                </div>
-              </div>
+    <div style={{ 
+      width: '100vw', 
+      minHeight: '100vh', 
+      position: 'relative', 
+      overflow: 'hidden',
+      margin: 0,
+      padding: 0,
+      left: '50%',
+      right: '50%',
+      marginLeft: '-50vw',
+      marginRight: '-50vw',
+      backgroundImage: 'url(/images/2.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}>
+      <div className="relative z-10 max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
+          {/* Payment Form */}
+          <div className="lg:col-span-7">
+            <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-6">
+              <Elements stripe={stripePromise}>
+                <CheckoutForm cart={cart} onSuccess={() => {}} />
+              </Elements>
             </div>
           </div>
 
-          {/* Payment Form */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Payment Information</h2>
-            <Elements stripe={stripePromise}>
-              <CheckoutForm cart={cart} onSuccess={() => setSuccess(true)} />
-            </Elements>
-            <div className="mt-6 text-sm text-gray-500">
-              <p className="mb-2">We accept the following payment methods:</p>
-              <div className="flex space-x-2">
-                <img src="/images/visa.png" alt="Visa" className="h-8" />
-                <img src="/images/mastercard.png" alt="Mastercard" className="h-8" />
-                <img src="/images/amex.png" alt="American Express" className="h-8" />
+          {/* Order Summary */}
+          <div className="mt-10 lg:mt-0 lg:col-span-5">
+            <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-6">Order Summary</h2>
+              <div className="flow-root">
+                <ul className="-my-4 divide-y divide-gray-200">
+                  {cart.line_items.map((item) => (
+                    <li key={item.id} className="flex items-center py-4">
+                      <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden">
+                        <img
+                          src={item.product.image_url || "/images/1.png"}
+                          alt={item.product.name}
+                          className="w-full h-full object-center object-cover"
+                        />
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h3 className="text-sm font-medium text-gray-900">{item.product.name}</h3>
+                        <p className="mt-1 text-sm text-gray-500">Qty {item.quantity}</p>
+                      </div>
+                      <p className="ml-4 text-sm font-medium text-gray-900">${item.product.price}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-6 border-t border-gray-200 pt-6">
+                <div className="flex justify-between text-base font-medium text-gray-900">
+                  <p>Subtotal</p>
+                  <p>${cart.total_price}</p>
+                </div>
+                <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '../src/App'
+import './application.scss'
 
 console.log("Application.js loaded");
 

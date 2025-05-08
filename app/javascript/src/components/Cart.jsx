@@ -100,13 +100,23 @@ const Cart = () => {
   console.log('Rendering cart with data:', cart);
 
   return (
-    <div className="relative min-h-screen w-full" style={{
+    <div style={{ 
+      width: '100vw', 
+      minHeight: '100vh', 
+      position: 'relative', 
+      overflow: 'hidden',
+      margin: 0,
+      padding: 0,
+      left: '50%',
+      right: '50%',
+      marginLeft: '-50vw',
+      marginRight: '-50vw',
       backgroundImage: 'url(/images/2.png)',
-
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }}>
+    
       <div className="relative z-10 max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Your Shopping Cart</h1>
         
@@ -124,53 +134,55 @@ const Cart = () => {
         ) : (
           <div className="mt-8">
             <div className="flow-root">
-              <ul className="-my-6 divide-y divide-gray-200">
+              <ul className="space-y-4">
                 {cart.line_items.map((item) => (
-                  <li key={item.id} className="py-6 flex" style={{
-                    background: 'rgba(255, 255, 255, 0.35)',
-                    boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)',
-                    backdropFilter: 'blur(5px)',
-                    WebkitBackdropFilter: 'blur(5px)',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.18)'
-                  }}>
-                    <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
+                  <li 
+                    key={item.id} 
+                    className="py-6 flex items-center bg-white/90 shadow-md rounded-2xl border border-gray-200/50 hover:shadow-lg transition-all duration-200 hover:-translate-y-1"
+                  >
+                    <div className="flex-shrink-0 w-32 h-32 rounded-lg overflow-hidden">
                       <img
                         src={item.product.image_url || "/images/1.png"}
                         alt={item.product.name}
-                        className="w-full h-full object-center object-cover"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
 
-                    <div className="ml-4 flex-1 flex flex-col">
-                      <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>{item.product.name}</h3>
-                          <p className="ml-4">${item.product.price}</p>
+                    <div className="ml-6 flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                            {item.product.name}
+                          </h3>
+                          <p className="mt-1 text-sm text-gray-600 line-clamp-2">{item.product.description}</p>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500">{item.product.description}</p>
+                        <p className="text-lg font-bold text-blue-600">${item.product.price}</p>
                       </div>
-                      <div className="flex-1 flex items-end justify-between text-sm">
-                        <div className="flex items-center space-x-2">
+                      
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
                           <button
                             onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
                           >
-                            -
+                            <span className="text-gray-600">−</span>
                           </button>
-                          <span className="text-gray-500">Qty {item.quantity}</span>
+                          <span className="text-gray-700 font-medium w-8 text-center">{item.quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-100"
+                            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
                           >
-                            +
+                            <span className="text-gray-600">+</span>
                           </button>
                         </div>
                         <button
                           type="button"
-                          className="font-medium text-red-600 hover:text-red-500"
+                          className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors flex items-center"
                           onClick={() => handleRemoveItem(item.id)}
                         >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
                           Remove
                         </button>
                       </div>
