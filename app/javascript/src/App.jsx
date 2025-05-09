@@ -10,10 +10,11 @@ const Products = lazy(() => import('./components/Products'))
 const ProductDetails = lazy(() => import('./components/ProductDetails'))
 const Cart = lazy(() => import('./components/Cart'))
 const SignUp = lazy(() => import('./components/SignUp'))
-const Login = lazy(() => import('./components/Login'))
+const Login = lazy(() => import('./pages/Login'))
 const AddProduct = lazy(() => import('./components/AddProduct'))
 const Profile = lazy(() => import('./components/Profile'))
 const Checkout = lazy(() => import('./components/Checkout'))
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
 // Loding 
 const Loading = () => (
@@ -40,6 +41,7 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/products/new" element={<AddProduct />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
               </Routes>
             </Suspense>
           </Layout>
