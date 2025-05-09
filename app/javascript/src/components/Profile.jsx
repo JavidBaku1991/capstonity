@@ -214,8 +214,28 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
-      <div className="bg-white shadow rounded-lg flex flex-col md:flex-row overflow-hidden">
+    <div className=" mx-auto  px-4 sm:py-24 sm:px-6 lg:px-8"
+    style={{ 
+      width: '100vw', 
+      minHeight: '100vh', 
+      backgroundImage: 'url(/images/2.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }}
+    >
+      <div className="bg-white shadow rounded-lg flex flex-col md:flex-row overflow-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(5px)',
+        WebkitBackdropFilter: 'blur(5px)',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        position: 'relative',
+        zIndex: 1
+      }}
+      >
         {/* Left column: Profile info only */}
         <div className="md:w-1/3 bg-white p-8 flex flex-col items-center border-r border-gray-200">
           <img
