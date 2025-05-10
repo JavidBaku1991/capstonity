@@ -10,6 +10,7 @@ gem "sprockets-rails"
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
 
+   gem "jsbundling-rails"
 # Use sqlite3 as the database for Active Record in development
 gem "sqlite3", "~> 1.4", groups: [:development, :test]
 
@@ -45,8 +46,8 @@ gem 'image_processing', '~> 1.2'
 gem 'bcrypt', '~> 3.1.7'
 
 # JavaScript dependencies
-gem "react-rails"
-gem "webpacker", "~> 5.4"
+# gem "react-rails"
+# gem "webpacker", "~> 5.4"
 
 # CSS preprocessor
 gem 'sassc-rails'
