@@ -101,14 +101,17 @@ const Login = () => {
     >
       <div className="flex flex-col md:flex-row gap-8 items-center justify-center w-full max-w-4xl p-6">
         {/* Login Form */}
-        <div className="flex-1 border-2 border-blue-400 rounded-md bg-white p-8 flex flex-col justify-center min-w-[320px] max-w-md"
+        <div 
+          className="flex-1 p-8 flex flex-col justify-center min-w-[320px] max-w-md"
           style={{
             background: 'rgba(255, 255, 255, 0.2)',
             borderRadius: '16px',
             boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(5px)',
             WebkitBackdropFilter: 'blur(5px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)'
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            position: 'relative',
+            zIndex: 1
           }}>
           <h2 className="text-2xl font-semibold text-center mb-8" style={{ color: '#7c3f2c' }}>Log in</h2>
           {error && (
@@ -122,7 +125,7 @@ const Login = () => {
               name="email"
               placeholder="Email"
               required
-              className="rounded-lg px-4 py-3 bg-gray-200 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg mb-2"
+              className="rounded-lg px-4 py-3 bg-white/50 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg mb-2"
               value={username}
               onChange={e => setUsername(e.target.value)}
             />
@@ -131,7 +134,7 @@ const Login = () => {
               name="password"
               placeholder="Password"
               required
-              className="rounded-lg px-4 py-3 bg-gray-200 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg mb-2"
+              className="rounded-lg px-4 py-3 bg-white/50 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg mb-2"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />

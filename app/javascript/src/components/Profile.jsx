@@ -222,9 +222,14 @@ const Profile = () => {
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed'
     }}>
-      <div className="mt-12 bg-white shadow rounded-lg flex flex-col md:flex-row overflow-hidden max-w-5xl w-full mx-4 my-8">
+      <div className="mt-12 bg-white/30 backdrop-blur-md shadow-lg rounded-lg flex flex-col md:flex-row overflow-hidden max-w-5xl w-full mx-4 my-8"
+        style={{
+          background: 'rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+          border: '1px solid rgba(255, 255, 255, 0.18)'
+        }}>
         {/* Left column: Profile info only */}
-        <div className="md:w-1/3 bg-white p-8 flex flex-col items-center border-r border-gray-200">
+        <div className="md:w-1/3 bg-white/30 backdrop-blur-md p-8 flex flex-col items-center border-r border-white/30">
           <img
             className="h-28 w-28 rounded-full object-cover mb-4"
             src={user.avatar_url || 'https://via.placeholder.com/96'}
@@ -324,7 +329,12 @@ const Profile = () => {
         </div>
       </div>
       {/* My Products section */}
-      <div className="bg-white shadow rounded-lg max-w-5xl w-full mx-4 my-8 p-8">
+      <div className="bg-white/30 backdrop-blur-md shadow-lg rounded-lg max-w-5xl w-full mx-4 my-8 p-8"
+        style={{
+          background: 'rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+          border: '1px solid rgba(255, 255, 255, 0.18)'
+        }}>
         <h3 className="text-2xl font-bold mb-6 text-gray-900">My Products</h3>
         {userProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
