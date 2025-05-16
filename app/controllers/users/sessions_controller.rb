@@ -66,11 +66,29 @@ class Users::SessionsController < Devise::SessionsController
     end
   end
 
+  def destroy
+    Rails.logger.info "Attempting to sign out user"
+    if current_user
+      sign_out(current_user)
+      reset_session
+      Rails.logger.info "User signed out successfully"
+      render json: {
+        status: { code: 200, message: 'Logged out successfully.' }
+      }
+    else
+      Rails.logger.info "No user found to sign out"
+      render json: {
+        status: { code: 401, message: "Couldn't find an active session." }
+      }, status: :unauthorized
+    end
+  end
+
   private
 
   def respond_to_on_destroy
     if current_user
       sign_out(current_user)
+      reset_session
       render json: {
         status: { code: 200, message: 'Logged out successfully.' }
       }
