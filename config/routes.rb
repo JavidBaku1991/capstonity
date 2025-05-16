@@ -55,6 +55,14 @@ Rails.application.routes.draw do
       end
       resources :cart_items, only: [:create, :update, :destroy]
       post 'create_payment_intent', to: 'payments#create_payment_intent'
+      
+      # Admin user management endpoints
+      resources :users, only: [:index, :destroy] do
+        member do
+          post :promote
+          post :demote
+        end
+      end
     end
   end
   

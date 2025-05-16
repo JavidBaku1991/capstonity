@@ -20,7 +20,7 @@ const AdminDashboard = () => {
     }
 
     // Check if user is admin
-    if (user.role !== 'admin') {
+    if (!user.admin) {
       navigate('/')
       return
     }
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
   }
 
   // Don't render anything if not logged in or not admin
-  if (!user || user.role !== 'admin') {
+  if (!user || !user.admin) {
     return null
   }
 
