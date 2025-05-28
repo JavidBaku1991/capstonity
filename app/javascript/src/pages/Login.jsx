@@ -100,7 +100,6 @@ const Login = () => {
     }}
     >
       <div className="flex flex-col md:flex-row gap-8 items-center justify-center w-full max-w-4xl p-6">
-        {/* Login Form */}
         <div 
           className="flex-1 p-8 flex flex-col justify-center min-w-[320px] max-w-md"
           style={{
