@@ -53,7 +53,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'sassc-rails'
 
 # AWS SDK for S3
-gem 'aws-sdk-s3', '~> 1.0'
+gem 'aws-sdk-s3', '~> 1.190'
 
 # Admin interface
 gem 'rails_admin', '~> 3.1'
